@@ -2,490 +2,516 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-	<meta content="utf-8" http-equiv="encoding">
-	<title>ScoreSaberComparison</title>
-	<style type="text/css">
-		* {
-			font-family: sans-serif;
-		}
-		body {
-			margin: 0;
-			padding: 0;
-		}
-		button, a.btn {
-			display: inline-block;
-			color: #008;
-			border-style: none;
-			background-color: #68f;
-			padding: 0.2cm 0.3cm;
-			margin: 1px;
-			cursor: pointer;
-		}
-		button:first-child, a.btn:first-child {
-			border-top-left-radius: 0.1cm;
-			border-bottom-left-radius: 0.1cm;
-			border-left-width: 1px;
-		}
-		button:last-child, a.btn:last-child {
-			border-top-right-radius: 0.1cm;
-			border-bottom-right-radius: 0.1cm;
-		}
-		button:active, a.btn:active {
-			color: #008;
-			background-color: #acf;
-		}
-		button.sort.asc, button.sort.desc {
-			color: #004;
-			background-color: #04d;
-		}
-		button.sort:after {
-			content: " △ ▽";
-		}
-		button.sort.asc:after {
-			content: " ▲ ▽";
-		}
-		button.sort.desc:after {
-			content: " △ ▼";
-		}
-		button.sort.reverse:after {
-			content: " ▽ △";
-		}
-		button.sort.reverse.asc:after {
-			content: " ▽ ▲";
-		}
-		button.sort.reverse.desc:after {
-			content: " ▼ △";
-		}
-		input[type=text] {
-			border-radius: 0.1cm;
-			border-style: solid;
-			border-color: #ccc;
-			border-width: 1px;
-			padding: 0.1cm;
-			margin: 0;
-		}
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>ScoreSaberComparison</title>
+    <style type="text/css">
+        * {
+            font-family: sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        a.btn, input[type=text] {
+            vertical-align: top;
+            display: inline-block;
+            border-style: none;
+            border-width: 0;
+            color: #008;
+            padding: 0.2cm;
+            margin: 1px;
+            height: 0.5cm;
+            text-decoration: none;
+        }
+        input[type=text] {
+            background-color: #fff;
+        }
+        a.btn {
+            background-color: #68f;
+            cursor: pointer;
+        }
+        a.btn:first-child, input[type=text]:first-child {
+            border-top-left-radius: 0.1cm;
+            border-bottom-left-radius: 0.1cm;
+            border-left-width: 1px;
+        }
+        a.btn:last-child, input[type=text]:last-child {
+            border-top-right-radius: 0.1cm;
+            border-bottom-right-radius: 0.1cm;
+        }
+        a.btn:active {
+            color: #008;
+            background-color: #acf;
+        }
+        a.btn.sort.asc, a.btn.sort.desc {
+            color: #004;
+            background-color: #04d;
+        }
+        a.btn.sort:after {
+            content: " △ ▽";
+        }
+        a.btn.sort.asc:after {
+            content: " ▲ ▽";
+        }
+        a.btn.sort.desc:after {
+            content: " △ ▼";
+        }
+        a.btn.sort.reverse:after {
+            content: " ▽ △";
+        }
+        a.btn.sort.reverse.asc:after {
+            content: " ▽ ▲";
+        }
+        a.btn.sort.reverse.desc:after {
+            content: " ▼ △";
+        }
+        a.btn.help {
+            padding: 0.1cm;
+            height: 0.7cm;
+        }
+        a.btn.help:after {
+            display: inline-block;
+            content: "?";
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+            width: 1.8ex;
+            height: 1.8ex;
+            font-size: 1.4ex;
+            line-height: 1.8ex;
+            margin: 0.15cm;
+            padding: 2px 1.5px 1.5px 2px;
+            border-radius: 50%;
+            color: #68f;
+            background-color: #008;
+        }
 
-		label.title, label.difficulty {
-			font-weight: bold;
-		}
-		label.easy {
-			color: #080;
-		}
-		label.normal {
-			color: #008;
-		}
-		label.hard {
-			color: #a80;
-		}
-		label.expert {
-			color: #a40;
-		}
-		label.expertplus {
-			color: #800;
-		}
-		label.author {
-			font-size: small;
-		}
+        label.title, label.difficulty {
+            font-weight: bold;
+        }
+        label.easy {
+            color: #080;
+        }
+        label.normal {
+            color: #008;
+        }
+        label.hard {
+            color: #a80;
+        }
+        label.expert {
+            color: #a40;
+        }
+        label.expertplus {
+            color: #800;
+        }
+        label.author {
+            font-size: small;
+        }
 
-		table#mainTable {
-			border-radius: 0.2cm;
-			border-style: solid;
-			border-color: #ccc;
-			border-width: 1px;
-			padding: 0;
-			margin: 0.2cm;
-			border-spacing: 0;
-		}
-		table#mainTable tr {
-			margin: 0;
-			padding: 0;
-		}
-		tbody#mainBody > tr:nth-child(2n), thead#mainHeader > tr:nth-child(2n+1) {
-			background-color: #eee;
-		}
-		tbody#mainBody > tr:nth-child(2n+1), thead#mainHeader > tr:nth-child(2n) {
-			background-color: #ccc;
-		}
-		td {
-			margin: 0;
-			padding: 0.1cm;
-			border-style: none;
-		}
-		img.albumcover {
-			max-height: 1cm;
-			max-width: 1cm;
-			float: left;
-			margin-right: 0.1cm;
-		}
-		div#bottom {
-  			display: inline-block;
-			font-size: small;
-			margin: 0.2cm;
-		}
-	</style>
-	<script type="text/javascript">
+        table#mainTable {
+            border-radius: 0.2cm;
+            border-style: solid;
+            border-color: #ccc;
+            border-width: 1px;
+            padding: 0;
+            margin: 0.2cm;
+            border-spacing: 0;
+        }
+        table#mainTable tr {
+            margin: 0;
+            padding: 0;
+        }
+        tbody#mainBody > tr:nth-child(2n), thead#mainHeader > tr:nth-child(2n+1) {
+            background-color: #eee;
+        }
+        tbody#mainBody > tr:nth-child(2n+1), thead#mainHeader > tr:nth-child(2n) {
+            background-color: #ccc;
+        }
+        td {
+            margin: 0;
+            padding: 0.2cm;
+            border-style: none;
+        }
+        img.albumcover {
+            max-height: 1cm;
+            max-width: 1cm;
+            float: left;
+            margin-right: 0.2cm;
+        }
+        div#bottom {
+            display: inline-block;
+            margin: 0.2cm;
+        }
+    </style>
+    <script type="text/javascript">
 
-		// change these variables to change the settings
-		var playerCount = 2;
-		var requestInterval = 100;
-		var scoreRefreshInterval = 200;
+        // change these variables to change the settings
+        var playerCount = 2;
+        var requestInterval = 100;
+        var scoreRefreshInterval = 200;
 
-		// do not change these variables unless you know what you're doing
-		var difficulties = ["Easy", "Easy", "Normal", "Normal", "Hard", "Hard", "Expert", "Expert", "Expert+", "Expert+"];
-		var loaded = false;
-		var users = Array.from('0'.repeat(playerCount + 1));
-		var players = {};
-		var songs = {};
-		var lastScoreUpdate = 0;
-		var scoreUpdateTimeout;
-		var sortingFunction;
+        // do not change these variables unless you know what you're doing
+        var difficulties = ["Easy", "Easy", "Normal", "Normal", "Hard", "Hard", "Expert", "Expert", "Expert+", "Expert+"];
+        var loaded = false;
+        var users = Array.from('0'.repeat(playerCount + 1));
+        var players = {};
+        var songs = {};
+        var lastScoreUpdate = 0;
+        var scoreUpdateTimeout;
+        var sortingFunction;
 
-		// this function increments the last number in a string. e.g. "abc123" => "abc124"
-		// TODO: unfinished, currently does 19 -> 110
-		function incrementLastNumber(input) {
-			return input.replace(/\d*(?=\D*$)/gi, function(i) { return isNaN(parseInt(i)) ? i : parseInt(i) + 1; })
-		}
+        // this function increments the last number in a string. e.g. "abc123" => "abc124"
+        // TODO: unfinished, currently does 19 -> 110
+        function incrementLastNumber(input) {
+            return input.replace(/\d*(?=\D*$)/gi, function(i) { return isNaN(parseInt(i)) ? i : parseInt(i) + 1; })
+        }
 
-		function maybeUpdateScores() {
-			if (scoreUpdateTimeout) {
-				return;
-			}
-			if (lastScoreUpdate > Date.now() - scoreRefreshInterval) {
-				scoreUpdateTimeout = window.setTimeout(updateScores, scoreRefreshInterval);
-				return;
-			}
-			updateScores();
-		}
+        function maybeUpdateScores() {
+            if (scoreUpdateTimeout) {
+                return;
+            }
+            if (lastScoreUpdate > Date.now() - scoreRefreshInterval) {
+                scoreUpdateTimeout = window.setTimeout(updateScores, scoreRefreshInterval);
+                return;
+            }
+            updateScores();
+        }
 
-		function loadImage(e) {
-			e.currentTarget.src = e.currentTarget.dataset.src;
-			e.currentTarget.removeEventListener("load", loadImage, true);
-		}
+        function loadImage(e) {
+            e.currentTarget.src = e.currentTarget.dataset.src;
+            e.currentTarget.removeEventListener("load", loadImage, true);
+        }
 
-		function loadErrorImage(e) {
-			e.currentTarget.src = e.currentTarget.dataset.errSrc;
-		}
+        function loadErrorImage(e) {
+            e.currentTarget.src = e.currentTarget.dataset.errSrc;
+        }
 
-		function updateScores() {
-			scoreUpdateTimeout = 0;
+        function updateScores() {
+            scoreUpdateTimeout = 0;
 
-			var songInserted = false;
-			for (var leaderboardId in songs) {
-				var row = document.getElementById("song-" + leaderboardId);
-				if (!row) {
-					songInserted = true;
-					var firstUser = Object.keys(songs[leaderboardId])[0];
-					var firstCol = document.createElement("td");
-					var albumcover = document.createElement("img");
-					albumcover.className = "albumcover";
-					albumcover.src = "loadingcover.svg";
-					albumcover.dataset.src = "https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png";
-					albumcover.dataset.errSrc = "nocover.svg";
-					albumcover.addEventListener("load", loadImage, true);
-					albumcover.addEventListener("error", loadErrorImage, true);
-					firstCol.appendChild(albumcover);
-					var title = document.createElement("label");
-					title.className = "title";
-					title.innerHTML = songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName;
-					firstCol.appendChild(title);
-					var difficulty = document.createElement("label");
-					difficulty.className = "difficulty " + difficulties[songs[leaderboardId][firstUser].difficulty].toLowerCase().replace("+", "plus");
-					difficulty.innerHTML = "(" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")";
-					firstCol.appendChild(difficulty);
-					firstCol.appendChild(document.createElement("br"));
-					var author = document.createElement("label");
-					author.className = "author";
-					author.innerHTML = "by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName;
-					firstCol.appendChild(author);
-					row = document.createElement("tr");
-					row.appendChild(firstCol);
-					for (var i = 1; i < users.length; ++i) {
-						var nextCol = document.createElement("td");
-						nextCol.id = "score-" + leaderboardId + "-" + users[i];
-						row.appendChild(nextCol);
-					}
-					row.id = "song-" + leaderboardId;
-					document.getElementById("mainBody").appendChild(row);
-				}
-				for (var i = 0; i < users.length; ++i) {
-					row.children[i].id = "score-" + leaderboardId + "-" + users[i];
-				}
-				for (var user in songs[leaderboardId]) {
-					var col = document.getElementById("score-" + leaderboardId + "-" + user);
-					if (!col) {
-						console.log("User not found: " + "score-" + leaderboardId + "-" + user);
-						continue;
-					}
-					var percent = parseInt(songs[leaderboardId][user].maxScore) > parseInt(songs[leaderboardId][user].unmodififiedScore) ? (parseInt(songs[leaderboardId][user].unmodififiedScore) / parseInt(songs[leaderboardId][user].maxScore) * 100) : 0;
-					col.innerHTML = "#" + songs[leaderboardId][user].rank + " - score: " + songs[leaderboardId][user].score + "<br />(" + songs[leaderboardId][user].pp.toFixed(2) + "pp aka " + percent.toFixed(2) + "%)";
-				}
-			}
-			if (songInserted) {
-				sortSongs();
-			}
-		}
+            var songInserted = false;
+            for (var leaderboardId in songs) {
+                var row = document.getElementById("song-" + leaderboardId);
+                if (!row) {
+                    songInserted = true;
+                    var firstUser = Object.keys(songs[leaderboardId])[0];
+                    var firstCol = document.createElement("td");
+                    var albumcover = document.createElement("img");
+                    albumcover.className = "albumcover";
+                    albumcover.src = "loadingcover.svg";
+                    albumcover.dataset.src = "https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png";
+                    albumcover.dataset.errSrc = "nocover.svg";
+                    albumcover.addEventListener("load", loadImage, true);
+                    albumcover.addEventListener("error", loadErrorImage, true);
+                    firstCol.appendChild(albumcover);
+                    var title = document.createElement("label");
+                    title.className = "title";
+                    title.innerHTML = songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName;
+                    firstCol.appendChild(title);
+                    var difficulty = document.createElement("label");
+                    difficulty.className = "difficulty " + difficulties[songs[leaderboardId][firstUser].difficulty].toLowerCase().replace("+", "plus");
+                    difficulty.innerHTML = "(" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")";
+                    firstCol.appendChild(difficulty);
+                    firstCol.appendChild(document.createElement("br"));
+                    var author = document.createElement("label");
+                    author.className = "author";
+                    author.innerHTML = "by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName;
+                    firstCol.appendChild(author);
+                    row = document.createElement("tr");
+                    row.appendChild(firstCol);
+                    for (var i = 1; i < users.length; ++i) {
+                        var nextCol = document.createElement("td");
+                        nextCol.id = "score-" + leaderboardId + "-" + users[i];
+                        row.appendChild(nextCol);
+                    }
+                    row.id = "song-" + leaderboardId;
+                    document.getElementById("mainBody").appendChild(row);
+                }
+                for (var i = 0; i < users.length; ++i) {
+                    row.children[i].id = "score-" + leaderboardId + "-" + users[i];
+                }
+                for (var user in songs[leaderboardId]) {
+                    var col = document.getElementById("score-" + leaderboardId + "-" + user);
+                    if (!col) {
+                        console.log("User not found: " + "score-" + leaderboardId + "-" + user);
+                        continue;
+                    }
+                    var percent = parseInt(songs[leaderboardId][user].maxScore) > parseInt(songs[leaderboardId][user].unmodififiedScore) ? (parseInt(songs[leaderboardId][user].unmodififiedScore) / parseInt(songs[leaderboardId][user].maxScore) * 100) : 0;
+                    col.innerHTML = "#" + songs[leaderboardId][user].rank + " - score: " + songs[leaderboardId][user].score + "<br />(" + songs[leaderboardId][user].pp.toFixed(2) + "pp aka " + percent.toFixed(2) + "%)";
+                }
+            }
+            if (songInserted) {
+                sortSongs();
+            }
+        }
 
-		function addScores() {
-			var result = JSON.parse(this.responseText);
-			if ("scores" in result) {
-				for (var i = 0; i < result.scores.length; ++i) {
-					if (!(result.scores[i].leaderboardId in songs)) {
-						songs[result.scores[i].leaderboardId] = {};
-					}
-					songs[result.scores[i].leaderboardId][this.responseURL.split("/", 6)[5]] = result.scores[i];
-				}
-				if (result.scores.length > 0) {
-					window.setTimeout(function (url) { return function () {
-						var xhr = new XMLHttpRequest();
-						xhr.open("GET", url);
-						xhr.addEventListener("load", addScores, true);
-						xhr.send();
-					}; }(incrementLastNumber(this.responseURL)), requestInterval);
-				}
-				if (window.localStorage) {
-					window.localStorage.setItem("songs", JSON.stringify(songs));
-				}
-				maybeUpdateScores();
-			}
-		}
+        function addScores() {
+            var result = JSON.parse(this.responseText);
+            if ("scores" in result) {
+                for (var i = 0; i < result.scores.length; ++i) {
+                    if (!(result.scores[i].leaderboardId in songs)) {
+                        songs[result.scores[i].leaderboardId] = {};
+                    }
+                    songs[result.scores[i].leaderboardId][this.responseURL.split("/", 6)[5]] = result.scores[i];
+                }
+                if (result.scores.length > 0) {
+                    window.setTimeout(function (url) { return function () {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", url);
+                        xhr.addEventListener("load", addScores, true);
+                        xhr.send();
+                    }; }(incrementLastNumber(this.responseURL)), requestInterval);
+                }
+                if (window.localStorage) {
+                    window.localStorage.setItem("songs", JSON.stringify(songs));
+                }
+                maybeUpdateScores();
+            }
+        }
 
-		function addPlayer() {
-			try {
-				var result = JSON.parse(this.responseText);
-			} catch (e) {
-				console.log(this.responseText);
-			}
-			players[result.playerInfo.playerId] = result;
-			for (var i = 0; i < users.length; ++i) {
-				document.getElementById("playerInfo").children[i].id = "info-" + users[i];
-			}
-			document.getElementById("info-" + result.playerInfo.playerId).innerHTML = result.playerInfo.playerName + " - " + result.playerInfo.pp.toFixed(2) + "pp<br />Rank: #" + result.playerInfo.rank + " (#" + result.playerInfo.countryRank + " in " + result.playerInfo.country + ")";
-			if (window.localStorage) {
-				window.localStorage.setItem("players", JSON.stringify(players));
-			}
-		}
+        function addPlayer() {
+            try {
+                var result = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log(this.responseText);
+            }
+            players[result.playerInfo.playerId] = result;
+            for (var i = 0; i < users.length; ++i) {
+                document.getElementById("playerInfo").children[i].id = "info-" + users[i];
+            }
+            document.getElementById("info-" + result.playerInfo.playerId).innerHTML = result.playerInfo.playerName + " - " + result.playerInfo.pp.toFixed(2) + "pp<br />Rank: #" + result.playerInfo.rank + " (#" + result.playerInfo.countryRank + " in " + result.playerInfo.country + ")";
+            if (window.localStorage) {
+                window.localStorage.setItem("players", JSON.stringify(players));
+            }
+        }
 
-		function updateUser(index) {
-			var xhr1 = new XMLHttpRequest();
-			xhr1.open("GET", "https://new.scoresaber.com/api/player/" + encodeURIComponent(users[index]) + "/scores/top/1");
-			xhr1.addEventListener("load", addScores, true);
-			xhr1.send();
-			var xhr2 = new XMLHttpRequest();
-			xhr2.open("GET", "https://new.scoresaber.com/api/player/" + encodeURIComponent(users[index]) + "/full")
-			xhr2.addEventListener("load", addPlayer, true);
-			xhr2.send();
-			window.location.hash = users.slice(1).join("#");
-		}
+        function updateUser(index) {
+            var xhr1 = new XMLHttpRequest();
+            xhr1.open("GET", "https://new.scoresaber.com/api/player/" + encodeURIComponent(users[index]) + "/scores/top/1");
+            xhr1.addEventListener("load", addScores, true);
+            xhr1.send();
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open("GET", "https://new.scoresaber.com/api/player/" + encodeURIComponent(users[index]) + "/full")
+            xhr2.addEventListener("load", addPlayer, true);
+            xhr2.send();
+            window.location.hash = users.slice(1).join("#");
+        }
 
-		function textInput(e) {
-			if (e.key == "Enter") {
-				users[e.currentTarget.dataset.column] = e.currentTarget.value;
-				// getSteamID(e.currentTarget.value, function (f) { console.log(f); });
-				updateUser(e.currentTarget.dataset.column);
-			}
-		}
+        function textInput(e) {
+            if (e.key == "Enter") {
+                users[e.currentTarget.dataset.column] = e.currentTarget.value;
+                // getSteamID(e.currentTarget.value, function (f) { console.log(f); });
+                updateUser(e.currentTarget.dataset.column);
+            }
+        }
 
-		function resize(arr, newSize, defaultValue) {
-		    while(newSize > arr.length) {
-		        arr.push(defaultValue);
-		    }
-		    arr.length = newSize;
-		}
+        function resize(arr, newSize, defaultValue) {
+            while(newSize > arr.length) {
+                arr.push(defaultValue);
+            }
+            arr.length = newSize;
+        }
 
-		function load(e) {
-			// ensure this function is only executed once
-			if (loaded) {
-				return;
-			}
-			// ensure the table already exists
-			if (!document.getElementById("mainTable")) {
-				return;
-			}
-			loaded = true;
+        function load(e) {
+            // ensure this function is only executed once
+            if (loaded) {
+                return;
+            }
+            // ensure the table already exists
+            if (!document.getElementById("mainTable")) {
+                return;
+            }
+            loaded = true;
 
-			users = window.location.hash.split("#");
-			resize(users, playerCount + 1, "");
+            users = window.location.hash.split("#");
+            resize(users, playerCount + 1, "");
 
-			for (var i = 0; i < playerCount; ++i) {
-				var playerInputField = document.createElement("input");
-				playerInputField.type = "text";
-				playerInputField.placeholder = "Player " + (i + 1) + " ID";
-				playerInputField.value = users[i + 1];
-				playerInputField.dataset.column = i + 1;
-				playerInputField.addEventListener("keydown", textInput, true);
-				var playerInputCell = document.createElement("td");
-				playerInputCell.className = "playerInput";
-				playerInputCell.appendChild(playerInputField);
-				document.getElementById("playerInputRow").appendChild(playerInputCell);
-				var playerInfoCell = document.createElement("td");
-				playerInfoCell.className = "playerInfo";
-				document.getElementById("playerInfo").appendChild(playerInfoCell);
-				var playerSortingCell = document.createElement("td");
-				playerSortingCell.className = "playerSorting";
-				playerSortingCell.dataset.column = i + 1;
-				var nobr = document.createElement("nobr");
-				var sortRankBtn = document.createElement("button");
-				sortRankBtn.innerHTML = "Rank";
-				sortRankBtn.className = "sort";
-				sortRankBtn.addEventListener("click", sortByUser(function (obj) { return obj.rank; }), true);
-				nobr.appendChild(sortRankBtn);
-				var sortScoreBtn = document.createElement("button");
-				sortScoreBtn.innerHTML = "Score";
-				sortScoreBtn.className = "sort reverse";
-				sortScoreBtn.addEventListener("click", sortByUser(function (obj) { return obj.score; }), true);
-				nobr.appendChild(sortScoreBtn);
-				var sortPpBtn = document.createElement("button");
-				sortPpBtn.innerHTML = "PP";
-				sortPpBtn.className = "sort reverse";
-				sortPpBtn.addEventListener("click", sortByUser(function (obj) { return obj.pp; }), true);
-				nobr.appendChild(sortPpBtn);
-				var sortPercentBtn = document.createElement("button");
-				sortPercentBtn.innerHTML = "Percent";
-				sortPercentBtn.className = "sort reverse";
-				sortPercentBtn.addEventListener("click", sortByUser(function (obj) { return parseInt(obj.maxScore) > parseInt(obj.unmodififiedScore) ? (parseInt(obj.unmodififiedScore) / parseInt(obj.maxScore) * 100) : 0; }), true);
-				nobr.appendChild(sortPercentBtn);
-				playerSortingCell.appendChild(nobr);
-				document.getElementById("sortingRow").appendChild(playerSortingCell);
-				updateUser(i + 1);
-			}
-			document.getElementById("sortby-songName").addEventListener("click", sortBySimple(function (obj) { return obj.songName; }), true);
-			document.getElementById("sortby-songAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.songAuthorName; }), true);
-			document.getElementById("sortby-levelAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.levelAuthorName; }), true);
-			if (window.localStorage) {
-				try {
-					songs = JSON.parse(window.localStorage.getItem("songs") || "{}");
-				} catch (e) {
-					songs = {};
-				}
-				try {
-					players = JSON.parse(window.localStorage.getItem("players") || "{}");
-				} catch (e) {
-					players = {};
-				}
-			}
-		}
+            for (var i = 0; i < playerCount; ++i) {
+                var nobr = document.createElement("nobr");
+                var playerInputField = document.createElement("input");
+                playerInputField.type = "text";
+                playerInputField.placeholder = "SteamID of a Player";
+                playerInputField.value = users[i + 1];
+                playerInputField.dataset.column = i + 1;
+                playerInputField.addEventListener("keydown", textInput, true);
+                var playerInputHelp = document.createElement("a");
+                playerInputHelp.className = "btn help";
+                playerInputHelp.href = "https://steamid.io/lookup";
+                var playerInputCell = document.createElement("td");
+                playerInputCell.className = "playerInput";
+                nobr.appendChild(playerInputField);
+                nobr.appendChild(playerInputHelp);
+                playerInputCell.appendChild(nobr);
+                document.getElementById("playerInputRow").appendChild(playerInputCell);
+                var playerInfoCell = document.createElement("td");
+                playerInfoCell.className = "playerInfo";
+                document.getElementById("playerInfo").appendChild(playerInfoCell);
+                var playerSortingCell = document.createElement("td");
+                playerSortingCell.className = "playerSorting";
+                playerSortingCell.dataset.column = i + 1;
+                var nobr = document.createElement("nobr");
+                var sortRankBtn = document.createElement("a");
+                sortRankBtn.innerHTML = "Rank";
+                sortRankBtn.className = "btn sort";
+                sortRankBtn.addEventListener("click", sortByUser(function (obj) { return obj.rank; }), true);
+                nobr.appendChild(sortRankBtn);
+                var sortScoreBtn = document.createElement("a");
+                sortScoreBtn.innerHTML = "Score";
+                sortScoreBtn.className = "btn sort reverse";
+                sortScoreBtn.addEventListener("click", sortByUser(function (obj) { return obj.score; }), true);
+                nobr.appendChild(sortScoreBtn);
+                var sortPpBtn = document.createElement("a");
+                sortPpBtn.innerHTML = "PP";
+                sortPpBtn.className = "btn sort reverse";
+                sortPpBtn.addEventListener("click", sortByUser(function (obj) { return obj.pp; }), true);
+                nobr.appendChild(sortPpBtn);
+                var sortPercentBtn = document.createElement("a");
+                sortPercentBtn.innerHTML = "Percent";
+                sortPercentBtn.className = "btn sort reverse";
+                sortPercentBtn.addEventListener("click", sortByUser(function (obj) { return parseInt(obj.maxScore) > parseInt(obj.unmodififiedScore) ? (parseInt(obj.unmodififiedScore) / parseInt(obj.maxScore) * 100) : 0; }), true);
+                nobr.appendChild(sortPercentBtn);
+                playerSortingCell.appendChild(nobr);
+                document.getElementById("sortingRow").appendChild(playerSortingCell);
+                updateUser(i + 1);
+            }
+            document.getElementById("sortby-songName").addEventListener("click", sortBySimple(function (obj) { return obj.songName; }), true);
+            document.getElementById("sortby-songAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.songAuthorName; }), true);
+            document.getElementById("sortby-levelAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.levelAuthorName; }), true);
+            if (window.localStorage) {
+                try {
+                    songs = JSON.parse(window.localStorage.getItem("songs") || "{}");
+                } catch (e) {
+                    songs = {};
+                }
+                try {
+                    players = JSON.parse(window.localStorage.getItem("players") || "{}");
+                } catch (e) {
+                    players = {};
+                }
+            }
+        }
 
-		function sortImpl(newSortingFunction1, newSortingFunction2) {
-			return function (e) {
-				var classes = e.currentTarget.classList;
-				var sortOrder;
-				if (classes.contains("reverse")) {
-					sortOrder = ["desc", "asc"];
-				} else {
-					sortOrder = ["asc", "desc"];
-				}
-				if (classes.contains("reverse") ^ classes.contains(sortOrder[0])) {
-					sortingFunction = newSortingFunction1(e);
-					cleanSortButtons();
-					if (classes.contains("reverse")) {
-						classes.add(sortOrder[0]);
-					} else {
-						classes.add(sortOrder[1]);
-					}
-				} else {
-					sortingFunction = newSortingFunction2(e);
-					cleanSortButtons();
-					if (classes.contains("reverse")) {
-						classes.add(sortOrder[1]);
-					} else {
-						classes.add(sortOrder[0]);
-					}
-				}
-				sortSongs();
-			};
-		}
+        function sortImpl(newSortingFunction1, newSortingFunction2) {
+            return function (e) {
+                var classes = e.currentTarget.classList;
+                var sortOrder;
+                if (classes.contains("reverse")) {
+                    sortOrder = ["desc", "asc"];
+                } else {
+                    sortOrder = ["asc", "desc"];
+                }
+                if (classes.contains("reverse") ^ classes.contains(sortOrder[0])) {
+                    sortingFunction = newSortingFunction1(e);
+                    cleanSortButtons();
+                    if (classes.contains("reverse")) {
+                        classes.add(sortOrder[0]);
+                    } else {
+                        classes.add(sortOrder[1]);
+                    }
+                } else {
+                    sortingFunction = newSortingFunction2(e);
+                    cleanSortButtons();
+                    if (classes.contains("reverse")) {
+                        classes.add(sortOrder[1]);
+                    } else {
+                        classes.add(sortOrder[0]);
+                    }
+                }
+                sortSongs();
+            };
+        }
 
-		function sortBySimple(newSortingFunction) {
-			return sortImpl(function (e) { return function (a, b) {
-				var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
-				var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
-				return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
-			}; }, function (e) { return function (a, b) {
-				var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
-				var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
-				return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
-			}; });
-		}
+        function sortBySimple(newSortingFunction) {
+            return sortImpl(function (e) { return function (a, b) {
+                var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
+                var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
+                return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
+            }; }, function (e) { return function (a, b) {
+                var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
+                var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
+                return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
+            }; });
+        }
 
-		function sortByUser(newSortingFunction) {
-			return sortImpl(
-				function (e) { return function (a, b) {
-					var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
-					if (!(username in songs[a]) && !(username in songs[b])) {
-						return 0;
-					} else if (!(username in songs[a])) {
-						return 1;
-					} else if (!(username in songs[b])) {
-						return -1;
-					}
-					var tmp1 = newSortingFunction(songs[a][username]);
-					var tmp2 = newSortingFunction(songs[b][username]);
-					return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
-				}; },
-				function (e) { return function (a, b) {
-					var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
-					if (!(username in songs[a]) && !(username in songs[b])) {
-						return 0;
-					} else if (!(username in songs[a])) {
-						return 1;
-					} else if (!(username in songs[b])) {
-						return -1;
-					}
-					var tmp1 = newSortingFunction(songs[a][username]);
-					var tmp2 = newSortingFunction(songs[b][username]);
-					return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
-				}; }
-			);
-		}
+        function sortByUser(newSortingFunction) {
+            return sortImpl(
+                function (e) { return function (a, b) {
+                    var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
+                    if (!(username in songs[a]) && !(username in songs[b])) {
+                        return 0;
+                    } else if (!(username in songs[a])) {
+                        return 1;
+                    } else if (!(username in songs[b])) {
+                        return -1;
+                    }
+                    var tmp1 = newSortingFunction(songs[a][username]);
+                    var tmp2 = newSortingFunction(songs[b][username]);
+                    return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
+                }; },
+                function (e) { return function (a, b) {
+                    var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
+                    if (!(username in songs[a]) && !(username in songs[b])) {
+                        return 0;
+                    } else if (!(username in songs[a])) {
+                        return 1;
+                    } else if (!(username in songs[b])) {
+                        return -1;
+                    }
+                    var tmp1 = newSortingFunction(songs[a][username]);
+                    var tmp2 = newSortingFunction(songs[b][username]);
+                    return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
+                }; }
+            );
+        }
 
-		function cleanSortButtons() {
-			var elements = document.querySelectorAll("button.asc, button.desc");
-			for (var i = 0; i < elements.length; ++i) {
-				elements[i].classList.remove("asc");
-				elements[i].classList.remove("desc");
-			}
-		}
+        function cleanSortButtons() {
+            var elements = document.querySelectorAll("a.btn.asc, a.btn.desc");
+            for (var i = 0; i < elements.length; ++i) {
+                elements[i].classList.remove("asc");
+                elements[i].classList.remove("desc");
+            }
+        }
 
-		function sortSongs() {
-			var sortedSongs = Object.keys(songs);
-			sortedSongs.sort(sortingFunction);
-			for (var i = 0; i < sortedSongs.length; ++i) {
-				var row = document.getElementById("song-" + sortedSongs[i]);
-				row.parentNode.appendChild(row);
-			}
-		}
+        function sortSongs() {
+            var sortedSongs = Object.keys(songs);
+            sortedSongs.sort(sortingFunction);
+            for (var i = 0; i < sortedSongs.length; ++i) {
+                var row = document.getElementById("song-" + sortedSongs[i]);
+                row.parentNode.appendChild(row);
+            }
+        }
 
-		// does not work atm due to CORS - might look into that later
-		function getSteamID(inputString, callback) {
-			var request = new XMLHttpRequest();
-			request.open("POST", "https://steamid.io/lookup", true);
-			request.setRequestHeader("content-type", "text/html; charset=UTF-8");
-			request.addEventListener("load", function () {
-				var url = request.responseURL;
-				if (url.startsWith("https://steamid.io/lookup/")) {
-					callback(url.substr(26));
-				} else {
-					callback();
-				}
-			}, true);
-			request.send("input=" + encodeURIComponent(inputString));
-		}
+        // does not work atm due to CORS - might look into that later
+        function getSteamID(inputString, callback) {
+            var request = new XMLHttpRequest();
+            request.open("POST", "https://steamid.io/lookup", true);
+            request.setRequestHeader("content-type", "text/html; charset=UTF-8");
+            request.addEventListener("load", function () {
+                var url = request.responseURL;
+                if (url.startsWith("https://steamid.io/lookup/")) {
+                    callback(url.substr(26));
+                } else {
+                    callback();
+                }
+            }, true);
+            request.send("input=" + encodeURIComponent(inputString));
+        }
 
-		window.addEventListener("load", load, true);
-	</script>
+        window.addEventListener("load", load, true);
+    </script>
 </head>
 <body>
-	<table id="mainTable">
-		<thead id="mainHeader">
-			<tr id="playerInputRow"><td>Song</td></tr>
-			<tr id="playerInfo"><td>Player info:</td></tr>
-			<tr id="sortingRow"><td>Sort by: <nobr><button id="sortby-songName" class="sort">Title</button><button id="sortby-songAuthorName" class="sort">Song Author</button><button id="sortby-levelAuthorName" class="sort">Level Author</button></nobr></td></tr>
-		</thead>
-		<tbody id="mainBody"></tbody>
-	</table>
-	<div id="bottom">
-		<a class="btn" href="https://maxmatti.github.io/ScoreSaberComparison/#">Main site</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison">Source Code</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison/issues/new">Report Issue</a>
-	</div>
+    <table id="mainTable">
+        <thead id="mainHeader">
+            <tr id="playerInputRow"><td>Song</td></tr>
+            <tr id="playerInfo"><td>Player info:</td></tr>
+            <tr id="sortingRow"><td>Sort by: <nobr><a id="sortby-songName" class="btn sort">Title</a><a id="sortby-songAuthorName" class="btn sort">Song Author</a><a id="sortby-levelAuthorName" class="btn sort">Level Author</a></nobr></td></tr>
+        </thead>
+        <tbody id="mainBody"></tbody>
+    </table>
+    <div id="bottom">
+        <a class="btn" href="https://maxmatti.github.io/ScoreSaberComparison/#">Main site</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison">Source Code</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison/issues/new">Report Issue</a>
+    </div>
 </body>
 </html>

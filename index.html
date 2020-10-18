@@ -7,24 +7,78 @@
 	<title>ScoreSaber-Comparison</title>
 	<style type="text/css">
 		button {
-			border-style: outset;
-			margin: 0;
+			border-style: solid;
+			border-color: #ccc;
+			border-width: 1px;
+			border-left-width: 0px;
 			padding: 0.1cm;
+			margin: 0;
+			cursor: pointer;
+		}
+		button:first-child {
+			border-top-left-radius: 0.1cm;
+			border-bottom-left-radius: 0.1cm;
+			border-left-width: 1px;
+		}
+		button:last-child {
+			border-top-right-radius: 0.1cm;
+			border-bottom-right-radius: 0.1cm;
+		}
+		button:after {
+			content: " △ ▽";
+		}
+		button.asc:after {
+			content: " ▲ ▽";
+		}
+		button.desc:after {
+			content: " △ ▼";
+		}
+		button.reverse:after {
+			content: " ▽ △";
+		}
+		button.reverse.asc:after {
+			content: " ▽ ▲";
+		}
+		button.reverse.desc:after {
+			content: " ▼ △";
+		}
+		input[type=text] {
+			border-radius: 0.1cm;
+			border-style: solid;
+			border-color: #ccc;
+			border-width: 1px;
+			padding: 0.1cm;
+			margin: 0;
 		}
 
-		img.albumcover {
-			height: 1cm;
-			float: left;
-			margin-right: 0.1cm;
+		table#mainTable {
+			border-radius: 0.25cm;
+			border-style: solid;
+			border-color: #ccc;
+			border-width: 1px;
+			padding: 0;
+			border-spacing: 0;
 		}
-		td {
-			padding: 0.1cm;
+		table#mainTable tr {
+			margin: 0;
+			padding: 0;
 		}
 		tbody#mainBody > tr:nth-child(2n), thead#mainHeader > tr:nth-child(2n+1) {
-			background-color: #ffffff;
+			background-color: #fff;
 		}
 		tbody#mainBody > tr:nth-child(2n+1), thead#mainHeader > tr:nth-child(2n) {
-			background-color: #cccccc;
+			background-color: #ccc;
+		}
+		td {
+			margin: 0;
+			padding: 0.1cm;
+			border-style: none;
+		}
+		img.albumcover {
+			max-height: 1cm;
+			max-width: 1cm;
+			float: left;
+			margin-right: 0.1cm;
 		}
 	</style>
 	<script type="text/javascript">
@@ -37,11 +91,12 @@
 		// do not change these variables unless you know what you're doing
 		var difficulties = ["Easy", "Easy", "Normal", "Normal", "Hard", "Hard", "Expert", "Expert", "Expert+", "Expert+"];
 		var loaded = false;
-		var songs = {};
 		var users = Array.from('0'.repeat(playerCount + 1));
 		var players = {};
+		var songs = {};
 		var lastScoreUpdate = 0;
 		var scoreUpdateTimeout;
+		var sortingFunction;
 
 		// this function increments the last number in a string. e.g. "abc123" => "abc124"
 		// TODO: unfinished, currently does 19 -> 110
@@ -60,15 +115,28 @@
 			updateScores();
 		}
 
+		function defaultImage(e) {
+			e.currentTarget.src = "nocover.svg";
+		}
+
 		function updateScores() {
 			scoreUpdateTimeout = 0;
 
+			var songInserted = false;
 			for (var leaderboardId in songs) {
 				var row = document.getElementById("song-" + leaderboardId);
 				if (!row) {
+					songInserted = true;
 					var firstUser = Object.keys(songs[leaderboardId])[0];
 					var firstCol = document.createElement("td");
-					firstCol.innerHTML = "<img src=\"https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png\" class=\"albumcover\" />" + songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName + " (" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")<br />by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName;
+					var albumcover = document.createElement("img");
+					albumcover.src = "https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png";
+					albumcover.className = "albumcover";
+					albumcover.addEventListener("error", defaultImage, true);
+					firstCol.appendChild(albumcover);
+					firstCol.appendChild(document.createTextNode(songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName + " (" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")"));
+					firstCol.appendChild(document.createElement("br"));
+					firstCol.appendChild(document.createTextNode("by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName));
 					row = document.createElement("tr");
 					row.appendChild(firstCol);
 					for (var i = 1; i < users.length; ++i) {
@@ -92,6 +160,9 @@
 					col.innerHTML = "#" + songs[leaderboardId][user].rank + " - score: " + songs[leaderboardId][user].score + "<br />(" + songs[leaderboardId][user].pp.toFixed(2) + "pp aka " + percent.toFixed(2) + "%)";
 				}
 			}
+			if (songInserted) {
+				sortSongs();
+			}
 		}
 
 		function addScores() {
@@ -111,6 +182,9 @@
 						xhr.send();
 					}; }(incrementLastNumber(this.responseURL)), requestInterval);
 				}
+				if (window.localStorage) {
+					window.localStorage.setItem("songs", JSON.stringify(songs));
+				}
 				maybeUpdateScores();
 			}
 		}
@@ -126,6 +200,9 @@
 				document.getElementById("playerInfo").children[i].id = "info-" + users[i];
 			}
 			document.getElementById("info-" + result.playerInfo.playerId).innerHTML = result.playerInfo.playerName + " - " + result.playerInfo.pp.toFixed(2) + "pp<br />Rank: #" + result.playerInfo.rank + " (#" + result.playerInfo.countryRank + " in " + result.playerInfo.country + ")";
+			if (window.localStorage) {
+				window.localStorage.setItem("players", JSON.stringify(players));
+			}
 		}
 
 		function updateUser(index) {
@@ -186,50 +263,93 @@
 				var playerSortingCell = document.createElement("td");
 				playerSortingCell.className = "playerSorting";
 				playerSortingCell.dataset.column = i + 1;
+				var nobr = document.createElement("nobr");
 				var sortRankBtn = document.createElement("button");
 				sortRankBtn.innerHTML = "Rank";
-				sortRankBtn.addEventListener("click", sortByUser(function (obj) { return -obj.rank; }), true);
-				playerSortingCell.appendChild(sortRankBtn);
+				sortRankBtn.addEventListener("click", sortByUser(function (obj) { return obj.rank; }), true);
+				nobr.appendChild(sortRankBtn);
 				var sortScoreBtn = document.createElement("button");
 				sortScoreBtn.innerHTML = "Score";
+				sortScoreBtn.className = "reverse";
 				sortScoreBtn.addEventListener("click", sortByUser(function (obj) { return obj.score; }), true);
-				playerSortingCell.appendChild(sortScoreBtn);
+				nobr.appendChild(sortScoreBtn);
 				var sortPpBtn = document.createElement("button");
 				sortPpBtn.innerHTML = "PP";
+				sortPpBtn.className = "reverse";
 				sortPpBtn.addEventListener("click", sortByUser(function (obj) { return obj.pp; }), true);
-				playerSortingCell.appendChild(sortPpBtn);
+				nobr.appendChild(sortPpBtn);
 				var sortPercentBtn = document.createElement("button");
 				sortPercentBtn.innerHTML = "Percent";
+				sortPercentBtn.className = "reverse";
 				sortPercentBtn.addEventListener("click", sortByUser(function (obj) { return parseInt(obj.maxScore) > parseInt(obj.unmodififiedScore) ? (parseInt(obj.unmodififiedScore) / parseInt(obj.maxScore) * 100) : 0; }), true);
-				playerSortingCell.appendChild(sortPercentBtn);
+				nobr.appendChild(sortPercentBtn);
+				playerSortingCell.appendChild(nobr);
 				document.getElementById("sortingRow").appendChild(playerSortingCell);
 				updateUser(i + 1);
 			}
 			document.getElementById("sortby-songName").addEventListener("click", sortBySimple(function (obj) { return obj.songName; }), true);
 			document.getElementById("sortby-songAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.songAuthorName; }), true);
 			document.getElementById("sortby-levelAuthorName").addEventListener("click", sortBySimple(function (obj) { return obj.levelAuthorName; }), true);
+			if (window.localStorage) {
+				try {
+					songs = JSON.parse(window.localStorage.getItem("songs") || "{}");
+				} catch (e) {
+					songs = {};
+				}
+				try {
+					players = JSON.parse(window.localStorage.getItem("players") || "{}");
+				} catch (e) {
+					players = {};
+				}
+			}
 		}
 
-		function sortBySimple(sortingFunction) {
+		function sortImpl(newSortingFunction1, newSortingFunction2) {
 			return function (e) {
-				var sortedSongs = Object.keys(songs);
-				sortedSongs.sort(function (a, b) {
-					var tmp1 = sortingFunction(songs[a][Object.keys(songs[a])[0]]);
-					var tmp2 = sortingFunction(songs[b][Object.keys(songs[b])[0]]);
-					return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
-				});
-				for (var i = 0; i < sortedSongs.length; ++i) {
-					var row = document.getElementById("song-" + sortedSongs[i]);
-					row.parentNode.appendChild(row);
+				var classes = e.currentTarget.classList;
+				var sortOrder;
+				if (classes.contains("reverse")) {
+					sortOrder = ["desc", "asc"];
+				} else {
+					sortOrder = ["asc", "desc"];
 				}
+				if (classes.contains("reverse") ^ classes.contains(sortOrder[0])) {
+					sortingFunction = newSortingFunction1(e);
+					cleanSortButtons();
+					if (classes.contains("reverse")) {
+						classes.add(sortOrder[0]);
+					} else {
+						classes.add(sortOrder[1]);
+					}
+				} else {
+					sortingFunction = newSortingFunction2(e);
+					cleanSortButtons();
+					if (classes.contains("reverse")) {
+						classes.add(sortOrder[1]);
+					} else {
+						classes.add(sortOrder[0]);
+					}
+				}
+				sortSongs();
 			};
 		}
 
-		function sortByUser(sortingFunction) {
-			return function (e) {
-				var username = users[e.currentTarget.parentNode.dataset.column];
-				var sortedSongs = Object.keys(songs);
-				sortedSongs.sort(function (a, b) {
+		function sortBySimple(newSortingFunction) {
+			return sortImpl(function (e) { return function (a, b) {
+				var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
+				var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
+				return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
+			}; }, function (e) { return function (a, b) {
+				var tmp1 = newSortingFunction(songs[a][Object.keys(songs[a])[0]]);
+				var tmp2 = newSortingFunction(songs[b][Object.keys(songs[b])[0]]);
+				return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
+			}; });
+		}
+
+		function sortByUser(newSortingFunction) {
+			return sortImpl(
+				function (e) { return function (a, b) {
+					var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
 					if (!(username in songs[a]) && !(username in songs[b])) {
 						return 0;
 					} else if (!(username in songs[a])) {
@@ -237,15 +357,41 @@
 					} else if (!(username in songs[b])) {
 						return -1;
 					}
-					var tmp1 = sortingFunction(songs[a][username]);
-					var tmp2 = sortingFunction(songs[b][username]);
+					var tmp1 = newSortingFunction(songs[a][username]);
+					var tmp2 = newSortingFunction(songs[b][username]);
 					return tmp1 < tmp2 ? 1 : tmp1 > tmp2 ? -1 : 0;
-				});
-				for (var i = 0; i < sortedSongs.length; ++i) {
-					var row = document.getElementById("song-" + sortedSongs[i]);
-					row.parentNode.appendChild(row);
-				}
-			};
+				}; },
+				function (e) { return function (a, b) {
+					var username = users[e.currentTarget.parentNode.parentNode.dataset.column];
+					if (!(username in songs[a]) && !(username in songs[b])) {
+						return 0;
+					} else if (!(username in songs[a])) {
+						return 1;
+					} else if (!(username in songs[b])) {
+						return -1;
+					}
+					var tmp1 = newSortingFunction(songs[a][username]);
+					var tmp2 = newSortingFunction(songs[b][username]);
+					return tmp1 > tmp2 ? 1 : tmp1 < tmp2 ? -1 : 0;
+				}; }
+			);
+		}
+
+		function cleanSortButtons() {
+			var elements = document.querySelectorAll("button.asc, button.desc");
+			for (var i = 0; i < elements.length; ++i) {
+				elements[i].classList.remove("asc");
+				elements[i].classList.remove("desc");
+			}
+		}
+
+		function sortSongs() {
+			var sortedSongs = Object.keys(songs);
+			sortedSongs.sort(sortingFunction);
+			for (var i = 0; i < sortedSongs.length; ++i) {
+				var row = document.getElementById("song-" + sortedSongs[i]);
+				row.parentNode.appendChild(row);
+			}
 		}
 
 		// does not work atm due to CORS - might look into that later
@@ -272,7 +418,7 @@
 		<thead id="mainHeader">
 			<tr id="playerInputRow"><td>Song</td></tr>
 			<tr id="playerInfo"><td>Player info:</td></tr>
-			<tr id="sortingRow"><td>Sort by: <button id="sortby-songName">Title</button><button id="sortby-songAuthorName">Song Author</button><button id="sortby-levelAuthorName">Level Author</button></td></tr>
+			<tr id="sortingRow"><td>Sort by: <nobr><button id="sortby-songName">Title</button><button id="sortby-songAuthorName">Song Author</button><button id="sortby-levelAuthorName">Level Author</button></nobr></td></tr>
 		</thead>
 		<tbody id="mainBody"></tbody>
 	</table>

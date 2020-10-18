@@ -6,6 +6,9 @@
 	<meta content="utf-8" http-equiv="encoding">
 	<title>ScoreSaber-Comparison</title>
 	<style type="text/css">
+		body, * {
+			font-family: sans-serif;
+		}
 		button {
 			border-style: solid;
 			border-color: #ccc;
@@ -49,6 +52,28 @@
 			border-width: 1px;
 			padding: 0.1cm;
 			margin: 0;
+		}
+
+		label.title {
+			font-weight: bold;
+		}
+		label.easy {
+			color: #080;
+		}
+		label.normal {
+			color: #008;
+		}
+		label.hard {
+			color: #a80;
+		}
+		label.expert {
+			color: #a40;
+		}
+		label.expertplus {
+			color: #800;
+		}
+		label.author {
+			font-size: small;
 		}
 
 		table#mainTable {
@@ -142,9 +167,19 @@
 					albumcover.addEventListener("load", loadImage, true);
 					albumcover.addEventListener("error", loadErrorImage, true);
 					firstCol.appendChild(albumcover);
-					firstCol.appendChild(document.createTextNode(songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName + " (" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")"));
+					var title = document.createElement("label");
+					title.className = "title";
+					title.innerHTML = songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName;
+					firstCol.appendChild(title);
+					var difficulty = document.createElement("label");
+					difficulty.className = difficulties[songs[leaderboardId][firstUser].difficulty].toLowerCase().replace("+", "plus");
+					difficulty.innerHTML = "(" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")";
+					firstCol.appendChild(difficulty);
 					firstCol.appendChild(document.createElement("br"));
-					firstCol.appendChild(document.createTextNode("by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName));
+					var author = document.createElement("label");
+					author.className = "author";
+					author.innerHTML = "by " + songs[leaderboardId][firstUser].songAuthorName + " and " + songs[leaderboardId][firstUser].levelAuthorName;
+					firstCol.appendChild(author);
 					row = document.createElement("tr");
 					row.appendChild(firstCol);
 					for (var i = 1; i < users.length; ++i) {

@@ -115,8 +115,13 @@
 			updateScores();
 		}
 
-		function defaultImage(e) {
-			e.currentTarget.src = "nocover.svg";
+		function loadImage(e) {
+			e.currentTarget.src = e.currentTarget.dataset.src;
+			e.currentTarget.removeEventListener("load", loadImage, true);
+		}
+
+		function loadErrorImage(e) {
+			e.currentTarget.src = e.currentTarget.dataset.errSrc;
 		}
 
 		function updateScores() {
@@ -130,9 +135,12 @@
 					var firstUser = Object.keys(songs[leaderboardId])[0];
 					var firstCol = document.createElement("td");
 					var albumcover = document.createElement("img");
-					albumcover.src = "https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png";
 					albumcover.className = "albumcover";
-					albumcover.addEventListener("error", defaultImage, true);
+					albumcover.src = "loadingcover.svg";
+					albumcover.dataset.src = "https://scoresaber.com/imports/images/songs/" + songs[leaderboardId][firstUser].songHash + ".png";
+					albumcover.dataset.errSrc = "nocover.svg";
+					albumcover.addEventListener("load", loadImage, true);
+					albumcover.addEventListener("error", loadErrorImage, true);
 					firstCol.appendChild(albumcover);
 					firstCol.appendChild(document.createTextNode(songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName + " (" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")"));
 					firstCol.appendChild(document.createElement("br"));

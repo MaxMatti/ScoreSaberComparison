@@ -4,45 +4,57 @@
 <head>
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta content="utf-8" http-equiv="encoding">
-	<title>ScoreSaber-Comparison</title>
+	<title>ScoreSaberComparison</title>
 	<style type="text/css">
-		body, * {
+		* {
 			font-family: sans-serif;
 		}
-		button {
-			border-style: solid;
-			border-color: #ccc;
-			border-width: 1px;
-			border-left-width: 0px;
-			padding: 0.1cm;
+		body {
 			margin: 0;
+			padding: 0;
+		}
+		button, a.btn {
+			display: inline-block;
+			color: #008;
+			border-style: none;
+			background-color: #68f;
+			padding: 0.2cm 0.3cm;
+			margin: 1px;
 			cursor: pointer;
 		}
-		button:first-child {
+		button:first-child, a.btn:first-child {
 			border-top-left-radius: 0.1cm;
 			border-bottom-left-radius: 0.1cm;
 			border-left-width: 1px;
 		}
-		button:last-child {
+		button:last-child, a.btn:last-child {
 			border-top-right-radius: 0.1cm;
 			border-bottom-right-radius: 0.1cm;
 		}
-		button:after {
+		button:active, a.btn:active {
+			color: #008;
+			background-color: #acf;
+		}
+		button.sort.asc, button.sort.desc {
+			color: #004;
+			background-color: #04d;
+		}
+		button.sort:after {
 			content: " △ ▽";
 		}
-		button.asc:after {
+		button.sort.asc:after {
 			content: " ▲ ▽";
 		}
-		button.desc:after {
+		button.sort.desc:after {
 			content: " △ ▼";
 		}
-		button.reverse:after {
+		button.sort.reverse:after {
 			content: " ▽ △";
 		}
-		button.reverse.asc:after {
+		button.sort.reverse.asc:after {
 			content: " ▽ ▲";
 		}
-		button.reverse.desc:after {
+		button.sort.reverse.desc:after {
 			content: " ▼ △";
 		}
 		input[type=text] {
@@ -54,7 +66,7 @@
 			margin: 0;
 		}
 
-		label.title {
+		label.title, label.difficulty {
 			font-weight: bold;
 		}
 		label.easy {
@@ -77,11 +89,12 @@
 		}
 
 		table#mainTable {
-			border-radius: 0.25cm;
+			border-radius: 0.2cm;
 			border-style: solid;
 			border-color: #ccc;
 			border-width: 1px;
 			padding: 0;
+			margin: 0.2cm;
 			border-spacing: 0;
 		}
 		table#mainTable tr {
@@ -89,7 +102,7 @@
 			padding: 0;
 		}
 		tbody#mainBody > tr:nth-child(2n), thead#mainHeader > tr:nth-child(2n+1) {
-			background-color: #fff;
+			background-color: #eee;
 		}
 		tbody#mainBody > tr:nth-child(2n+1), thead#mainHeader > tr:nth-child(2n) {
 			background-color: #ccc;
@@ -104,6 +117,11 @@
 			max-width: 1cm;
 			float: left;
 			margin-right: 0.1cm;
+		}
+		div#bottom {
+  			display: inline-block;
+			font-size: small;
+			margin: 0.2cm;
 		}
 	</style>
 	<script type="text/javascript">
@@ -172,7 +190,7 @@
 					title.innerHTML = songs[leaderboardId][firstUser].songName + " " + songs[leaderboardId][firstUser].songSubName;
 					firstCol.appendChild(title);
 					var difficulty = document.createElement("label");
-					difficulty.className = difficulties[songs[leaderboardId][firstUser].difficulty].toLowerCase().replace("+", "plus");
+					difficulty.className = "difficulty " + difficulties[songs[leaderboardId][firstUser].difficulty].toLowerCase().replace("+", "plus");
 					difficulty.innerHTML = "(" + difficulties[songs[leaderboardId][firstUser].difficulty] + ")";
 					firstCol.appendChild(difficulty);
 					firstCol.appendChild(document.createElement("br"));
@@ -309,21 +327,22 @@
 				var nobr = document.createElement("nobr");
 				var sortRankBtn = document.createElement("button");
 				sortRankBtn.innerHTML = "Rank";
+				sortRankBtn.className = "sort";
 				sortRankBtn.addEventListener("click", sortByUser(function (obj) { return obj.rank; }), true);
 				nobr.appendChild(sortRankBtn);
 				var sortScoreBtn = document.createElement("button");
 				sortScoreBtn.innerHTML = "Score";
-				sortScoreBtn.className = "reverse";
+				sortScoreBtn.className = "sort reverse";
 				sortScoreBtn.addEventListener("click", sortByUser(function (obj) { return obj.score; }), true);
 				nobr.appendChild(sortScoreBtn);
 				var sortPpBtn = document.createElement("button");
 				sortPpBtn.innerHTML = "PP";
-				sortPpBtn.className = "reverse";
+				sortPpBtn.className = "sort reverse";
 				sortPpBtn.addEventListener("click", sortByUser(function (obj) { return obj.pp; }), true);
 				nobr.appendChild(sortPpBtn);
 				var sortPercentBtn = document.createElement("button");
 				sortPercentBtn.innerHTML = "Percent";
-				sortPercentBtn.className = "reverse";
+				sortPercentBtn.className = "sort reverse";
 				sortPercentBtn.addEventListener("click", sortByUser(function (obj) { return parseInt(obj.maxScore) > parseInt(obj.unmodififiedScore) ? (parseInt(obj.unmodififiedScore) / parseInt(obj.maxScore) * 100) : 0; }), true);
 				nobr.appendChild(sortPercentBtn);
 				playerSortingCell.appendChild(nobr);
@@ -461,9 +480,12 @@
 		<thead id="mainHeader">
 			<tr id="playerInputRow"><td>Song</td></tr>
 			<tr id="playerInfo"><td>Player info:</td></tr>
-			<tr id="sortingRow"><td>Sort by: <nobr><button id="sortby-songName">Title</button><button id="sortby-songAuthorName">Song Author</button><button id="sortby-levelAuthorName">Level Author</button></nobr></td></tr>
+			<tr id="sortingRow"><td>Sort by: <nobr><button id="sortby-songName" class="sort">Title</button><button id="sortby-songAuthorName" class="sort">Song Author</button><button id="sortby-levelAuthorName" class="sort">Level Author</button></nobr></td></tr>
 		</thead>
 		<tbody id="mainBody"></tbody>
 	</table>
+	<div id="bottom">
+		<a class="btn" href="https://maxmatti.github.io/ScoreSaberComparison/#">Main site</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison">Source Code</a><a class="btn" href="https://github.com/MaxMatti/ScoreSaberComparison/issues/new">Report Issue</a>
+	</div>
 </body>
 </html>

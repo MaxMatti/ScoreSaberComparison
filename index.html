@@ -261,8 +261,30 @@
             }
         }
 
+        function tryAgainLater(url, fn, timeout) {
+            window.setTimeout(
+                function(url) { 
+                    return function () {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", url)
+                        xhr.addEventListener("load", fn, true);
+                        xhr.send();
+                    };
+                }(url), timeout);
+        }
+
         function addScores() {
-            var result = JSON.parse(this.responseText);
+            try {
+                var result = JSON.parse(this.responseText);
+            } catch (e) {
+                if (this.responseText.includes("try again later")) {
+                    console.log("API limit reached: \"" + this.responseText + "\", retrying again in 10s.");
+                    tryAgainLater(this.responseURL, addScores, 10000);
+                } else {
+                    console.log("API returned unknown error: \"" + this.responseText + "\"");
+                }
+                return;
+            }
             if ("scores" in result) {
                 for (var i = 0; i < result.scores.length; ++i) {
                     if (!(result.scores[i].leaderboardId in songs)) {
@@ -289,7 +311,13 @@
             try {
                 var result = JSON.parse(this.responseText);
             } catch (e) {
-                console.log(this.responseText);
+                if (this.responseText.includes("try again later")) {
+                    console.log("API limit reached: \"" + this.responseText + "\", retrying again in 10s.");
+                    tryAgainLater(this.responseURL, addPlayer, 10000);
+                } else {
+                    console.log("API returned unknown error: \"" + this.responseText + "\"");
+                }
+                return;
             }
             players[result.playerInfo.playerId] = result;
             for (var i = 0; i < users.length; ++i) {

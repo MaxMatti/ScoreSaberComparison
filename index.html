@@ -66,13 +66,20 @@
         a.btn.sort.reverse.desc:after {
             content: " ▼ △";
         }
-        a.btn.help {
+        a.btn.send.hidden {
+            width: 0;
+            margin-right: 0;
+            margin-left: 0;
+            padding-right: 0;
+            padding-left: 0;
+        }
+        a.btn.send, a.btn.help {
             padding: 0.1cm;
             height: 0.7cm;
+            transition: width 0.5s, margin 0.5s, padding 0.5s;
         }
-        a.btn.help:after {
+        a.btn.send:after, a.btn.help:after {
             display: inline-block;
-            content: "?";
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
@@ -81,10 +88,18 @@
             font-size: 1.4ex;
             line-height: 1.8ex;
             margin: 0.15cm;
-            padding: 2px 1.5px 1.5px 2px;
             border-radius: 50%;
             color: #68f;
             background-color: #008;
+            transition: width 0.5s, margin 0.5s, padding 0.5s;
+        }
+        a.btn.send:after {
+            content: "↲";
+            padding: 2.5px 2px 1px 1.5px;
+        }
+        a.btn.help:after {
+            content: "?";
+            padding: 2px 1.5px 1.5px 2px;
         }
 
         label.title, label.difficulty {
@@ -301,9 +316,17 @@
         function textInput(e) {
             if (e.key == "Enter") {
                 users[e.currentTarget.dataset.column] = e.currentTarget.value;
+                e.currentTarget.nextElementSibling.classList.add("hidden");
                 // getSteamID(e.currentTarget.value, function (f) { console.log(f); });
                 updateUser(e.currentTarget.dataset.column);
+            } else {
+                e.currentTarget.nextElementSibling.classList.remove("hidden");
             }
+        }
+
+        function sendBtn(e) {
+            e.currentTarget.classList.add("hidden");
+            updateUser(e.currentTarget.dataset.column);
         }
 
         function resize(arr, newSize, defaultValue) {
@@ -335,12 +358,17 @@
                 playerInputField.value = users[i + 1];
                 playerInputField.dataset.column = i + 1;
                 playerInputField.addEventListener("keydown", textInput, true);
+                var playerInputSend = document.createElement("a");
+                playerInputSend.className = "btn send";
+                playerInputSend.dataset.column = i + 1;
+                playerInputSend.addEventListener("click", sendBtn, true);
                 var playerInputHelp = document.createElement("a");
                 playerInputHelp.className = "btn help";
                 playerInputHelp.href = "https://steamid.io/lookup";
                 var playerInputCell = document.createElement("td");
                 playerInputCell.className = "playerInput";
                 nobr.appendChild(playerInputField);
+                nobr.appendChild(playerInputSend);
                 nobr.appendChild(playerInputHelp);
                 playerInputCell.appendChild(nobr);
                 document.getElementById("playerInputRow").appendChild(playerInputCell);
